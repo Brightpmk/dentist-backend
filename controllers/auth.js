@@ -35,17 +35,21 @@ const sendTokenResponse = (user, statusCode, res) => {
 exports.register = async (req, res, next) => {
   try {
     const { name, telephoneNumber, email, password } = req.body;
-    // Create user
+
     const user = await User.create({
       name,
       telephoneNumber,
       email,
-      password
+      password,
     });
-    sendTokenResponse(user,200,res);
+
+    sendTokenResponse(user, 200, res);
   } catch (err) {
-    res.status(400).json({ success: false });
-    console.log(err.stack);
+    console.log(err);
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
