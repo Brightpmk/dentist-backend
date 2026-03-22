@@ -24,7 +24,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://your-frontend-vercel-url.vercel.app",
+      "https://dentaire-five.vercel.app/",
     ],
     credentials: true,
   })
