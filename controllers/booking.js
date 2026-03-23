@@ -7,29 +7,43 @@ const Dentist = require("../models/Dentist");
 exports.getBookings = async (req, res, next) => {
   let query;
 
-  // 1. Requirement: User ดูได้เฉพาะของตัวเอง, Admin ดูได้ทั้งหมด
-  if (req.user.role !== "admin") {
-    query = Booking.find({ user: req.user.id }).populate({
-      path: "dentist",
-      select: "name experienceYears expertise",
-    });
-  } else {
-    // Admin see all
-    if (req.params.dentistId) {
-      query = Booking.find({ dentist: req.params.dentistId }).populate({
-        path: "dentist",
-        select: "name experienceYears expertise",
-      });
-    } else {
-      query = Booking.find().populate({
-        path: "dentist",
-        select: "name experienceYears expertise",
-      });
-    }
-  }
-
   try {
+    if (req.user.role !== "admin") {
+      query = Booking.find({ user: req.user.id })
+        .populate({
+          path: "dentist",
+          select: "name experienceYears expertise",
+        })
+        .populate({
+          path: "user",
+          select: "name email telephoneNumber role",
+        });
+    } else {
+      if (req.params.dentistId) {
+        query = Booking.find({ dentist: req.params.dentistId })
+          .populate({
+            path: "dentist",
+            select: "name experienceYears expertise",
+          })
+          .populate({
+            path: "user",
+            select: "name email telephoneNumber role",
+          });
+      } else {
+        query = Booking.find()
+          .populate({
+            path: "dentist",
+            select: "name experienceYears expertise",
+          })
+          .populate({
+            path: "user",
+            select: "name email telephoneNumber role",
+          });
+      }
+    }
+
     const bookings = await query;
+
     res.status(200).json({
       success: true,
       count: bookings.length,
@@ -48,10 +62,15 @@ exports.getBookings = async (req, res, next) => {
 // @access  Private
 exports.getBooking = async (req, res, next) => {
   try {
-    const booking = await Booking.findById(req.params.id).populate({
-      path: "dentist",
-      select: "name experienceYears expertise",
-    });
+    const booking = await Booking.findById(req.params.id)
+      .populate({
+        path: "dentist",
+        select: "name experienceYears expertise",
+      })
+      .populate({
+        path: "user",
+        select: "name email telephoneNumber role",
+      });
 
     if (!booking) {
       return res.status(404).json({
@@ -60,8 +79,7 @@ exports.getBooking = async (req, res, next) => {
       });
     }
 
-    // เช็คสิทธิ์: ถ้าไม่ใช่เจ้าของและไม่ใช่ admin ห้ามดู ==================================== เพิ่มจาก a-7
-    if (booking.user.toString() !== req.user.id && req.user.role !== "admin") {
+    if (booking.user._id.toString() !== req.user.id && req.user.role !== "admin") {
       return res.status(401).json({
         success: false,
         message: "Not authorized to view this booking",
