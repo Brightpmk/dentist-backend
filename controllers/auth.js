@@ -1,6 +1,7 @@
 // controllers/auth.js
 
 const User = require('../models/User');
+const Booking = require('../models/Booking'); 
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
