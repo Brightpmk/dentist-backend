@@ -186,3 +186,15 @@ exports.changePassword = async (req, res, next) => {
     });
   }
 };
+
+// @desc    Delete own account
+// @route   DELETE /api/v1/auth/me
+// @access  Private
+exports.deleteMe = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user.id);
+    res.status(200).json({ success: true, message: 'Account deleted' });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
