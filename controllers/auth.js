@@ -192,6 +192,8 @@ exports.changePassword = async (req, res, next) => {
 // @access  Private
 exports.deleteMe = async (req, res) => {
   try {
+
+    await Booking.deleteMany({ user: req.user.id });
     await User.findByIdAndDelete(req.user.id);
     res.status(200).json({ success: true, message: 'Account deleted' });
   } catch (err) {
