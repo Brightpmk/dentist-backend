@@ -61,7 +61,7 @@ A robust RESTful API built with Node.js, Express, and MongoDB for managing denti
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Brightpmk/dentist-backend
    cd dentist-backend
    ```
 
